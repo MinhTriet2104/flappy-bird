@@ -3,6 +3,7 @@ function game() {
   this.context = null;
   this.width = 288;
   this.height = 512;
+  this.isStart = false;
 
   // item
   this.bg = null;
@@ -10,6 +11,7 @@ function game() {
   this.base = null;
   this.pipe = null;
   this.gameOverImg = null;
+  this.menu = null;
 
   // status
   this.lose = false;
@@ -43,9 +45,19 @@ function game() {
     this.gameOverImg = new Image();
     this.gameOverImg.src = "./images/gameover.png";
 
+    // create menu start
+    this.menu = new Image();
+    this.menu.src = "./images/message.png";
+
     // Event press
     this.mouseClickEvent();
     this.keyboardPressEvent();
+
+    // Start event
+    if (!this.isStart) {
+      this.canvas.addEventListener("click", this.startGame);
+      document.body.addEventListener("keydown", this.startGame);
+    }
 
     this.loop();
   };
@@ -53,6 +65,13 @@ function game() {
   this.loop = () => {
     if (this.lose) {
       this.context.drawImage(this.gameOverImg, 50, 150);
+      if (confirm("Game Over! Bạn có muốn chơi lại ?")) {
+        document.body.removeChild(
+          document.body.childNodes[document.body.childNodes.length - 1]
+        );
+        const g = new game();
+        g.init();
+      }
       return;
     }
     this.update();
@@ -64,14 +83,15 @@ function game() {
     this.bird.update();
     this.bg.update();
     this.base.update();
-    this.pipe.update();
+    if (this.isStart) this.pipe.update();
   };
 
   this.draw = function() {
     this.bg.draw();
-    this.pipe.draw();
+    if (this.isStart) this.pipe.draw();
     this.bird.draw();
     this.base.draw();
+    if (!this.isStart) this.context.drawImage(this.menu, 50, 30);
   };
 
   this.mouseClickEvent = function() {
@@ -84,6 +104,10 @@ function game() {
     document.body.addEventListener("keydown", () => {
       this.bird.flap();
     });
+  };
+
+  this.startGame = () => {
+    this.isStart = true;
   };
 }
 

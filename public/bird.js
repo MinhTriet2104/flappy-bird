@@ -11,9 +11,9 @@ function bird(game) {
   this.currentFrame = 0;
 
   this.x = Math.floor(this.game.width / 4);
-  this.y = Math.floor(this.game.width / 2);
+  this.y = Math.floor(this.game.width / 2) + 50;
   this.speedY = 0;
-  this.acceleration = 0.5;
+  this.acceleration = 0.3;
 
   const self = this;
 
@@ -62,49 +62,51 @@ function bird(game) {
       this.currentImage = 2;
     }
 
-    const yOut = this.game.height - this.height - this.game.base.height;
-    if (this.y <= yOut) {
-      this.speedY += this.acceleration;
-      this.y += this.speedY;
-    }
-    if (this.y >= yOut) {
-      this.y = yOut;
-      this.game.lose = true;
-    }
-
-    for (let i = 0; i < 2; i++) {
-      if (
-        this.x >= this.game.pipe.pipes[i].x &&
-        this.x <= this.game.pipe.pipes[i].x + this.game.pipe.width &&
-        this.y + this.height >= this.game.pipe.pipes[i].y
-      ) {
+    if (this.game.isStart) {
+      const yOut = this.game.height - this.height - this.game.base.height;
+      if (this.y <= yOut) {
+        this.speedY += this.acceleration;
+        this.y += this.speedY;
+      }
+      if (this.y >= yOut) {
+        this.y = yOut;
         this.game.lose = true;
       }
 
-      if (
-        this.x >= this.game.pipe.pipes[i].x &&
-        this.x <= this.game.pipe.pipes[i].x + this.game.pipe.width &&
-        this.y <= this.game.pipe.pipes[i].y - this.game.pipe.space
-      ) {
-        this.game.lose = true;
-      }
+      for (let i = 0; i < 2; i++) {
+        if (
+          this.x >= this.game.pipe.pipes[i].x &&
+          this.x <= this.game.pipe.pipes[i].x + this.game.pipe.width &&
+          this.y + this.height >= this.game.pipe.pipes[i].y
+        ) {
+          this.game.lose = true;
+        }
 
-      if (
-        this.x + this.width >= this.game.pipe.pipes[i].x &&
-        this.x + this.width <=
-          this.game.pipe.pipes[i].x + this.game.pipe.width &&
-        this.y + this.height >= this.game.pipe.pipes[i].y
-      ) {
-        this.game.lose = true;
-      }
+        if (
+          this.x >= this.game.pipe.pipes[i].x &&
+          this.x <= this.game.pipe.pipes[i].x + this.game.pipe.width &&
+          this.y <= this.game.pipe.pipes[i].y - this.game.pipe.space
+        ) {
+          this.game.lose = true;
+        }
 
-      if (
-        this.x + this.width >= this.game.pipe.pipes[i].x &&
-        this.x + this.width <=
-          this.game.pipe.pipes[i].x + this.game.pipe.width &&
-        this.y <= this.game.pipe.pipes[i].y - this.game.pipe.space
-      ) {
-        this.game.lose = true;
+        if (
+          this.x + this.width >= this.game.pipe.pipes[i].x &&
+          this.x + this.width <=
+            this.game.pipe.pipes[i].x + this.game.pipe.width &&
+          this.y + this.height >= this.game.pipe.pipes[i].y
+        ) {
+          this.game.lose = true;
+        }
+
+        if (
+          this.x + this.width >= this.game.pipe.pipes[i].x &&
+          this.x + this.width <=
+            this.game.pipe.pipes[i].x + this.game.pipe.width &&
+          this.y <= this.game.pipe.pipes[i].y - this.game.pipe.space
+        ) {
+          this.game.lose = true;
+        }
       }
     }
   };
@@ -121,6 +123,6 @@ function bird(game) {
 
   this.flap = function() {
     if (this.game.lose) return;
-    this.speedY = -7;
+    if (this.game.isStart) this.speedY = -5;
   };
 }
